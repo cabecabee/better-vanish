@@ -1,0 +1,22 @@
+name: BetterVanish
+version: 1.0.0
+main: me.cabeca.BetterVanish
+description: Vanish Plugin for Insolence SMP
+author: cabecabee
+website: https://github.com/cabecabee/better-vanish
+api-version: '26.1.2'
+commands:
+  vanish:
+    permission: better-vanish.admin
+    description: Faz o jogador desaparecer (apenas para operadores)
+    aliases:
+      - v
+  fly:
+    permission: better-vanish.admin
+    description: Faz o jogador voar (apenas para operadores)
+    aliases:
+      - f
+permissions:
+  better-vanish.admin:
+    description: Operador do plugin.
+    default: op
