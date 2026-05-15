@@ -6,14 +6,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
 
-public class JoinListener implements Listener {
+public class JoinLeftListener implements Listener {
+
     private final VanishCommand vanishCommand;
     private final JavaPlugin plugin;
-    public JoinListener(JavaPlugin plugin, VanishCommand vanishCommand){
+    public JoinLeftListener(JavaPlugin plugin, VanishCommand vanishCommand){
         this.plugin = plugin;
         this.vanishCommand = vanishCommand;
     }
@@ -27,12 +29,23 @@ public class JoinListener implements Listener {
         }
 
         if(vanishCommand.getVanishedPlayers().contains(joined.getUniqueId())){
+
+            joinEvent.joinMessage(null);
+
             for(Player inServer : Bukkit.getOnlinePlayers()){
                 if(inServer.equals(joined)) continue;
                 inServer.hidePlayer(plugin, joined);
-                joined.sendMessage("Você ainda está escondido!");
             }
+            joined.sendMessage("§aVocê ainda está escondido!");
         }
-
     }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent quitEvent){
+        Player quit = quitEvent.getPlayer();
+        if(vanishCommand.getVanishedPlayers().contains(quit.getUniqueId())){
+            quitEvent.quitMessage(null);
+        }
+    }
+
 }

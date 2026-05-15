@@ -53,6 +53,28 @@ public class VanishCommand implements CommandExecutor {
         if(vanished) vanishedPlayers.remove(targetPlayer.getUniqueId());
         else vanishedPlayers.add(targetPlayer.getUniqueId());
         saveVanishedPlayers();
+        
+        if(vanished){
+
+            if(targetPlayer.equals(sender)){
+                sender.sendMessage("§cVocê não está mais vanished!");
+            }
+            else{
+                sender.sendMessage("§aO jogador voltou a aparecer!");
+                targetPlayer.sendMessage("§cVocê não está mais vanished!");
+            }
+
+        }
+        else{
+
+            if(targetPlayer.equals(sender)){
+                sender.sendMessage("§aVocê entrou em vanish!");
+            }
+            else{
+                sender.sendMessage("§aO jogador entrou em vanish!");
+                targetPlayer.sendMessage("§aVocê entrou em vanish!");
+            }
+        }
 
         return true;
     }
