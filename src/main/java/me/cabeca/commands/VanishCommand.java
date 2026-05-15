@@ -1,5 +1,7 @@
 package me.cabeca.commands;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -53,7 +55,28 @@ public class VanishCommand implements CommandExecutor {
         if(vanished) vanishedPlayers.remove(targetPlayer.getUniqueId());
         else vanishedPlayers.add(targetPlayer.getUniqueId());
         saveVanishedPlayers();
-        
+
+
+        if(vanished){
+
+            Bukkit.broadcast(
+                    Component.translatable(
+                            "multiplayer.player.joined",
+                            targetPlayer.displayName()
+                    ).color(NamedTextColor.YELLOW)
+            );
+
+        }
+        else{
+
+            Bukkit.broadcast(
+                    Component.translatable(
+                            "multiplayer.player.left",
+                            targetPlayer.displayName()
+                    ).color(NamedTextColor.YELLOW)
+            );
+        }
+
         if(vanished){
 
             if(targetPlayer.equals(sender)){
