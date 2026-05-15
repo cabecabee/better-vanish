@@ -5,9 +5,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,6 +17,12 @@ public class VanishCommand implements CommandExecutor {
 
     // lista de players vanished
     private final Set<UUID> vanishedPlayers = new HashSet<>();
+
+    private final JavaPlugin plugin;
+
+    public VanishCommand(JavaPlugin plugin){
+        this.plugin = plugin;
+    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
@@ -39,13 +47,30 @@ public class VanishCommand implements CommandExecutor {
 
         for(Player p : Bukkit.getOnlinePlayers()){
             if(p.equals(targetPlayer)) continue;
-            if(vanished) p.showPlayer(targetPlayer);
-            else p.hidePlayer(targetPlayer);
+            if(vanished) p.showPlayer(plugin, targetPlayer);
+            else p.hidePlayer(plugin, targetPlayer);
         }
         if(vanished) vanishedPlayers.remove(targetPlayer.getUniqueId());
         else vanishedPlayers.add(targetPlayer.getUniqueId());
+        saveVanishedPlayers();
 
         return true;
     }
 
+    private void saveVanishedPlayers(){
+        List<String> uuids = vanishedPlayers.stream().map(UUID::toString).toList();
+        plugin.getConfig().set("vanished-players", uuids);
+        plugin.saveConfig();
+    }
+
+    public void loadVanishedPlayers(){
+        List<String> uuids = plugin.getConfig().getStringList("vanished-players");
+        for(String uuidString : uuids){
+            vanishedPlayers.add(UUID.fromString(uuidString));
+        }
+    }
+
+    public Set<UUID> getVanishedPlayers(){
+        return vanishedPlayers;
+    }
 }
