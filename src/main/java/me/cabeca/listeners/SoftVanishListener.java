@@ -1,6 +1,7 @@
 package me.cabeca.listeners;
 
 import me.cabeca.commands.SoftVanishCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,9 +24,21 @@ public class SoftVanishListener implements Listener {
         Player player = event.getPlayer();
 
         if(softVanishCommand.getSoftVanishedPlayers().contains(player.getUniqueId())){
-            event.joinMessage(null);
+
             softVanishCommand.applySoftVanish(player);
-            player.sendMessage("§aVocê ainda está escondido!");
+
+            player.sendMessage("§aVocê ainda está em soft vanish!");
+
+            event.joinMessage(null);
+
+            for(Player p : Bukkit.getOnlinePlayers()){
+
+                if(!p.hasPermission("better-vanish.admin")) continue;
+
+                if(p.equals(player)) continue;
+
+                p.sendMessage("§a" + player.getName() + " entrou no servidor em soft vanish.");
+            }
         }
     }
 
@@ -34,11 +47,18 @@ public class SoftVanishListener implements Listener {
 
         Player player = event.getPlayer();
 
-        if(softVanishCommand
-                .getSoftVanishedPlayers()
-                .contains(player.getUniqueId())){
+        if(softVanishCommand.getSoftVanishedPlayers().contains(player.getUniqueId())){
 
             event.quitMessage(null);
+
+            for(Player p : Bukkit.getOnlinePlayers()){
+
+                if(!p.hasPermission("better-vanish.admin")) continue;
+
+                if(p.equals(player)) continue;
+
+                p.sendMessage("§c" + player.getName() + " saiu do servidor em soft vanish.");
+            }
         }
     }
 }

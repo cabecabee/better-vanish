@@ -103,22 +103,52 @@ public class SoftVanishCommand implements CommandExecutor {
 
         if(softVanished){
 
-            Bukkit.broadcast(
-                    Component.translatable(
-                            "multiplayer.player.joined",
-                            Component.text(targetPlayer.getName())
-                    ).color(NamedTextColor.YELLOW)
-            );
+            for(Player p : Bukkit.getOnlinePlayers()) {
+                if(p.hasPermission("better-vanish.admin")) continue;
+                p.sendMessage(
+                        Component.translatable(
+                                "multiplayer.player.joined",
+                                Component.text(targetPlayer.getName())
+                        ).color(NamedTextColor.YELLOW)
+                );
+
+            }
 
         }
         else{
 
-            Bukkit.broadcast(
-                    Component.translatable(
-                            "multiplayer.player.left",
-                            Component.text(targetPlayer.getName())
-                    ).color(NamedTextColor.YELLOW)
-            );
+            for(Player p : Bukkit.getOnlinePlayers()) {
+                if(p.hasPermission("better-vanish.admin")) continue;
+                p.sendMessage(
+                        Component.translatable(
+                                "multiplayer.player.left",
+                                Component.text(targetPlayer.getName())
+                        ).color(NamedTextColor.YELLOW)
+                );
+
+            }
+        }
+
+        if(softVanished){
+
+            for(Player p : Bukkit.getOnlinePlayers()){
+
+                if(!p.hasPermission("better-vanish.admin")) continue;
+                if(p.equals(targetPlayer)) continue;
+
+                p.sendMessage("§c" + targetPlayer.getName() + " saiu do soft vanish.");
+            }
+
+        }
+        else{
+
+            for(Player p : Bukkit.getOnlinePlayers()){
+
+                if(!p.hasPermission("better-vanish.admin")) continue;
+                if(p.equals(targetPlayer)) continue;
+
+                p.sendMessage("§a" + targetPlayer.getName() + " entrou em soft vanish.");
+            }
         }
 
         return true;

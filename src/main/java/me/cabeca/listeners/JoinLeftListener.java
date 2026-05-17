@@ -21,11 +21,22 @@ public class JoinLeftListener implements Listener {
     }
     @EventHandler
     public void onJoin(PlayerJoinEvent joinEvent){
+
         Player joined = joinEvent.getPlayer();
+
         for(UUID uuid : vanishCommand.getVanishedPlayers()){
+
             Player vanished = Bukkit.getPlayer(uuid);
+
             if(vanished == null) continue;
-            if(!joined.hasPermission("better-vanish.admin")) joined.hidePlayer(plugin, vanished);
+
+            if(!joined.hasPermission("better-vanish.admin")){
+                joined.hidePlayer(plugin, vanished);
+            }
+            else if(!vanished.equals(joined)){
+                joined.sendMessage("§a" + vanished.getName() + " está vanished."
+                );
+            }
         }
 
         if(vanishCommand.getVanishedPlayers().contains(joined.getUniqueId())){
@@ -33,18 +44,42 @@ public class JoinLeftListener implements Listener {
             joinEvent.joinMessage(null);
 
             for(Player inServer : Bukkit.getOnlinePlayers()){
+
                 if(inServer.equals(joined)) continue;
-                if(!inServer.hasPermission("better-vanish.admin")) inServer.hidePlayer(plugin, joined);
+
+                if(!inServer.hasPermission("better-vanish.admin")){
+                    inServer.hidePlayer(plugin, joined);
+                }
+                else{
+
+                    inServer.sendMessage("§a" + joined.getName() + " entrou no servidor enquanto vanished."
+                    );
+                }
             }
+
             joined.sendMessage("§aVocê ainda está escondido!");
         }
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent quitEvent){
+
         Player quit = quitEvent.getPlayer();
+
         if(vanishCommand.getVanishedPlayers().contains(quit.getUniqueId())){
+
             quitEvent.quitMessage(null);
+
+            for(Player p : Bukkit.getOnlinePlayers()){
+
+                if(!p.hasPermission("better-vanish.admin")) continue;
+
+                if(p.equals(quit)) continue;
+
+                p.sendMessage(
+                        "§c" + quit.getName() + " saiu do servidor vanished."
+                );
+            }
         }
     }
 
