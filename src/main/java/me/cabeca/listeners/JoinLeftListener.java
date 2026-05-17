@@ -25,7 +25,7 @@ public class JoinLeftListener implements Listener {
         for(UUID uuid : vanishCommand.getVanishedPlayers()){
             Player vanished = Bukkit.getPlayer(uuid);
             if(vanished == null) continue;
-            joined.hidePlayer(plugin, vanished);
+            if(!joined.hasPermission("better-vanish.admin")) joined.hidePlayer(plugin, vanished);
         }
 
         if(vanishCommand.getVanishedPlayers().contains(joined.getUniqueId())){
@@ -34,7 +34,7 @@ public class JoinLeftListener implements Listener {
 
             for(Player inServer : Bukkit.getOnlinePlayers()){
                 if(inServer.equals(joined)) continue;
-                inServer.hidePlayer(plugin, joined);
+                if(!inServer.hasPermission("better-vanish.admin")) inServer.hidePlayer(plugin, joined);
             }
             joined.sendMessage("§aVocê ainda está escondido!");
         }

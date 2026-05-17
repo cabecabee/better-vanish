@@ -49,6 +49,7 @@ public class VanishCommand implements CommandExecutor {
 
         for(Player p : Bukkit.getOnlinePlayers()){
             if(p.equals(targetPlayer)) continue;
+            if(p.hasPermission("better-vanish.admin")) continue;
             if(vanished) p.showPlayer(plugin, targetPlayer);
             else p.hidePlayer(plugin, targetPlayer);
         }
