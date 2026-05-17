@@ -2,6 +2,7 @@ package me.cabeca.listeners;
 
 import me.cabeca.commands.VanishCommand;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,7 +36,7 @@ public class TellListener implements Listener {
         // caso nao seja op:
         if(vanishCommand.getVanishedPlayers().contains(targetPlayer.getUniqueId())){
             event.setCancelled(true);
-            event.getPlayer().sendMessage(Component.translatable("argument.entity.notfound.player"));
+            event.getPlayer().sendMessage(Component.translatable("argument.entity.notfound.player").color(NamedTextColor.RED));
         }
     }
 }
