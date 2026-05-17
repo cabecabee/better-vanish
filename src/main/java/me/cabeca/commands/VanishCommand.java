@@ -63,7 +63,7 @@ public class VanishCommand implements CommandExecutor {
             Bukkit.broadcast(
                     Component.translatable(
                             "multiplayer.player.joined",
-                            targetPlayer.displayName()
+                            Component.text(targetPlayer.getName())
                     ).color(NamedTextColor.YELLOW)
             );
 
@@ -73,7 +73,7 @@ public class VanishCommand implements CommandExecutor {
             Bukkit.broadcast(
                     Component.translatable(
                             "multiplayer.player.left",
-                            targetPlayer.displayName()
+                            Component.text(targetPlayer.getName())
                     ).color(NamedTextColor.YELLOW)
             );
         }

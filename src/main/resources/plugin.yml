@@ -11,6 +11,11 @@ commands:
     description: Faz o jogador desaparecer (apenas para operadores)
     aliases:
       - v
+  softvanish:
+    permission: better-vanish.admin
+    description: Faz o jogador ser escondido de tudo, porém continuar com seu modelo (apenas para operadores)
+    aliases:
+      - sv
   fly:
     permission: better-vanish.admin
     description: Faz o jogador voar (apenas para operadores)

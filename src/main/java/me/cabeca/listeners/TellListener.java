@@ -1,5 +1,6 @@
 package me.cabeca.listeners;
 
+import me.cabeca.commands.SoftVanishCommand;
 import me.cabeca.commands.VanishCommand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -11,8 +12,10 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 public class TellListener implements Listener {
     private final VanishCommand vanishCommand;
+    private final SoftVanishCommand softVanishCommand;
 
-    public TellListener(VanishCommand vanishCommand){
+    public TellListener(SoftVanishCommand softVanishCommand, VanishCommand vanishCommand){
+        this.softVanishCommand = softVanishCommand;
         this.vanishCommand = vanishCommand;
     }
 
@@ -34,7 +37,9 @@ public class TellListener implements Listener {
         if(event.getPlayer().hasPermission("better-vanish.admin")) return;
 
         // caso nao seja op:
-        if(vanishCommand.getVanishedPlayers().contains(targetPlayer.getUniqueId())){
+        boolean vanished = vanishCommand.getVanishedPlayers().contains(targetPlayer.getUniqueId());
+        boolean softVanished = softVanishCommand.getSoftVanishedPlayers().contains(targetPlayer.getUniqueId());
+        if(vanished || softVanished){
             event.setCancelled(true);
             event.getPlayer().sendMessage(Component.translatable("argument.entity.notfound.player").color(NamedTextColor.RED));
         }
