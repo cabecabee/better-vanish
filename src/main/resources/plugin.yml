@@ -21,6 +21,9 @@ commands:
     description: Faz o jogador voar (apenas para operadores)
     aliases:
       - f
+  name:
+    permission: better-vanish.admin
+    description: Muda o nome do jogador (apenas para operadores)
 permissions:
   better-vanish.admin:
     description: Operador do plugin.
