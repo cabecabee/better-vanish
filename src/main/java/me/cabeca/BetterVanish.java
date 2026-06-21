@@ -1,6 +1,7 @@
 package me.cabeca;
 
 import me.cabeca.commands.FlyCommand;
+import me.cabeca.commands.NameCommand;
 import me.cabeca.commands.SoftVanishCommand;
 import me.cabeca.commands.VanishCommand;
 import me.cabeca.listeners.JoinLeftListener;
@@ -31,6 +32,7 @@ public class BetterVanish extends JavaPlugin {
         vanishCommand.loadVanishedPlayers();
         Objects.requireNonNull(getCommand("vanish")).setExecutor(vanishCommand);
         Objects.requireNonNull(getCommand("fly")).setExecutor(new FlyCommand());
+        Objects.requireNonNull(getCommand("name")).setExecutor(new NameCommand());
         Bukkit.getPluginManager().registerEvents(new JoinLeftListener(this, vanishCommand), this);
         Bukkit.getPluginManager().registerEvents(new TellListener(softVanishCommand, vanishCommand), this);
         Bukkit.getPluginManager().registerEvents(new SoftVanishListener(softVanishCommand), this);

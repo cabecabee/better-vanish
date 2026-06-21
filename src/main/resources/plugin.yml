@@ -22,9 +22,12 @@ commands:
     aliases:
       - f
   name:
-    permission: better-vanish.admin
+    permission: better-vanish.name
     description: Muda o nome do jogador (apenas para operadores)
 permissions:
   better-vanish.admin:
     description: Operador do plugin.
+    default: op
+  better-vanish.name:
+    description: Pode mudar o próprio nome.
     default: op
