@@ -5,6 +5,7 @@ description: Vanish Plugin for Insolence SMP
 author: cabecabee
 website: https://github.com/cabecabee/better-vanish
 api-version: '26.1.2'
+softdepend: [DiscordSRV]
 commands:
   vanish:
     permission: better-vanish.admin
