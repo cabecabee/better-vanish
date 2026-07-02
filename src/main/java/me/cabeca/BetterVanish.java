@@ -3,6 +3,7 @@ package me.cabeca;
 import me.cabeca.commands.FlyCommand;
 import me.cabeca.commands.SoftVanishCommand;
 import me.cabeca.commands.VanishCommand;
+import me.cabeca.integration.DiscordSrvPermissionService;
 import me.cabeca.listeners.JoinLeftListener;
 import me.cabeca.listeners.SoftVanishListener;
 import me.cabeca.listeners.TabCompleteListener;
@@ -24,16 +25,17 @@ public class BetterVanish extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         getLogger().info("Better Vanish ativado!");
-        SoftVanishCommand softVanishCommand = new SoftVanishCommand(this);
+        DiscordSrvPermissionService discordSrvPermissionService = new DiscordSrvPermissionService(this);
+        SoftVanishCommand softVanishCommand = new SoftVanishCommand(this, discordSrvPermissionService);
         softVanishCommand.loadSoftVanishedPlayers();
         Objects.requireNonNull(getCommand("softvanish")).setExecutor(softVanishCommand);
-        VanishCommand vanishCommand = new VanishCommand(this);
+        VanishCommand vanishCommand = new VanishCommand(this, discordSrvPermissionService);
         vanishCommand.loadVanishedPlayers();
         Objects.requireNonNull(getCommand("vanish")).setExecutor(vanishCommand);
         Objects.requireNonNull(getCommand("fly")).setExecutor(new FlyCommand());
-        Bukkit.getPluginManager().registerEvents(new JoinLeftListener(this, vanishCommand), this);
+        Bukkit.getPluginManager().registerEvents(new JoinLeftListener(this, vanishCommand, discordSrvPermissionService), this);
         Bukkit.getPluginManager().registerEvents(new TellListener(softVanishCommand, vanishCommand), this);
-        Bukkit.getPluginManager().registerEvents(new SoftVanishListener(softVanishCommand), this);
+        Bukkit.getPluginManager().registerEvents(new SoftVanishListener(softVanishCommand, discordSrvPermissionService), this);
         Bukkit.getPluginManager().registerEvents(new TabCompleteListener(softVanishCommand), this);
 
         for(Player player : Bukkit.getOnlinePlayers()){

@@ -1,5 +1,7 @@
 package me.cabeca.commands;
 
+import me.cabeca.integration.DiscordSrvBridge;
+import me.cabeca.integration.DiscordSrvPermissionService;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -7,23 +9,27 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class VanishCommand implements CommandExecutor {
 
     // lista de players vanished
     private final Set<UUID> vanishedPlayers = new HashSet<>();
 
-    private final JavaPlugin plugin;
+    private boolean hasDiscordSRV() {
+        return Bukkit.getPluginManager().isPluginEnabled("DiscordSRV");
+    }
 
-    public VanishCommand(JavaPlugin plugin){
+    private final JavaPlugin plugin;
+    private final DiscordSrvPermissionService discordPermService;
+
+    public VanishCommand(JavaPlugin plugin, DiscordSrvPermissionService discordPermService){
         this.plugin = plugin;
+        this.discordPermService = discordPermService;
     }
 
     @Override
@@ -50,11 +56,27 @@ public class VanishCommand implements CommandExecutor {
         for(Player p : Bukkit.getOnlinePlayers()){
             if(p.equals(targetPlayer)) continue;
             if(p.hasPermission("better-vanish.admin")) continue;
-            if(vanished) p.showPlayer(plugin, targetPlayer);
-            else p.hidePlayer(plugin, targetPlayer);
+            if(vanished){
+                p.showPlayer(plugin, targetPlayer);
+            }
+            else {
+                p.hidePlayer(plugin, targetPlayer);
+            }
         }
-        if(vanished) vanishedPlayers.remove(targetPlayer.getUniqueId());
-        else vanishedPlayers.add(targetPlayer.getUniqueId());
+        if(vanished){
+            vanishedPlayers.remove(targetPlayer.getUniqueId());
+            if(hasDiscordSRV()) {
+                discordPermService.removeSilent(targetPlayer);
+                DiscordSrvBridge.sendFakeJoin(targetPlayer);
+            }
+        }
+        else {
+            vanishedPlayers.add(targetPlayer.getUniqueId());
+            if (hasDiscordSRV()){
+                discordPermService.applySilent(targetPlayer);
+                DiscordSrvBridge.sendFakeLeave(targetPlayer);
+        }
+        }
         saveVanishedPlayers();
 
 

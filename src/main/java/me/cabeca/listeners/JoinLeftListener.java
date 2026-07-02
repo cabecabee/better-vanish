@@ -1,7 +1,7 @@
 package me.cabeca.listeners;
 
-import github.scarsz.discordsrv.DiscordSRV;
 import me.cabeca.commands.VanishCommand;
+import me.cabeca.integration.DiscordSrvPermissionService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,19 +9,22 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
 
 public class JoinLeftListener implements Listener {
-
     private final VanishCommand vanishCommand;
     private final JavaPlugin plugin;
+    private final DiscordSrvPermissionService discordPermService;
+    private boolean hasDiscordSRV() {
+        return Bukkit.getPluginManager().isPluginEnabled("DiscordSRV");
+    }
 
-    public JoinLeftListener(JavaPlugin plugin, VanishCommand vanishCommand){
+    public JoinLeftListener(JavaPlugin plugin, VanishCommand vanishCommand, DiscordSrvPermissionService discordPermService){
         this.plugin = plugin;
         this.vanishCommand = vanishCommand;
+        this.discordPermService = discordPermService;
     }
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent joinEvent){
@@ -44,7 +47,7 @@ public class JoinLeftListener implements Listener {
         }
 
         if(vanishCommand.getVanishedPlayers().contains(joined.getUniqueId())){
-
+            if(hasDiscordSRV()) discordPermService.applySilent(joined);
             joinEvent.joinMessage(null);
 
             for(Player inServer : Bukkit.getOnlinePlayers()){
@@ -71,7 +74,7 @@ public class JoinLeftListener implements Listener {
         Player quit = quitEvent.getPlayer();
 
         if(vanishCommand.getVanishedPlayers().contains(quit.getUniqueId())){
-
+            if(hasDiscordSRV()) discordPermService.removeSilent(quit);
             quitEvent.quitMessage(null);
 
             for(Player p : Bukkit.getOnlinePlayers()){

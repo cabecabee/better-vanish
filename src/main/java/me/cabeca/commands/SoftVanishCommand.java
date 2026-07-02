@@ -1,5 +1,7 @@
 package me.cabeca.commands;
 
+import me.cabeca.integration.DiscordSrvBridge;
+import me.cabeca.integration.DiscordSrvPermissionService;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -13,10 +15,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class SoftVanishCommand implements CommandExecutor {
 
@@ -26,8 +25,15 @@ public class SoftVanishCommand implements CommandExecutor {
 
     private final Team team;
 
-    public SoftVanishCommand(JavaPlugin plugin){
+    private final DiscordSrvPermissionService discordPermService;
+
+    private boolean hasDiscordSRV() {
+        return Bukkit.getPluginManager().isPluginEnabled("DiscordSRV");
+    }
+
+    public SoftVanishCommand(JavaPlugin plugin, DiscordSrvPermissionService discordPermService){
         this.plugin = plugin;
+        this.discordPermService = discordPermService;
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = manager.getMainScoreboard();
         Team existing = board.getTeam("hidden_names");
@@ -91,6 +97,10 @@ public class SoftVanishCommand implements CommandExecutor {
             softVanishedPlayers.remove(
                     targetPlayer.getUniqueId()
             );
+            if(hasDiscordSRV()) {
+                discordPermService.removeSilent(targetPlayer);
+                DiscordSrvBridge.sendFakeJoin(targetPlayer);
+            }
             saveSoftVanishedPlayers();
         }
         else{
@@ -98,6 +108,10 @@ public class SoftVanishCommand implements CommandExecutor {
             applySoftVanish(targetPlayer);
 
             softVanishedPlayers.add(targetPlayer.getUniqueId());
+            if(hasDiscordSRV()){
+                discordPermService.applySilent(targetPlayer);
+                DiscordSrvBridge.sendFakeLeave(targetPlayer);
+            }
             saveSoftVanishedPlayers();
         }
 
@@ -189,5 +203,4 @@ public class SoftVanishCommand implements CommandExecutor {
 
         player.playerListName(Component.text(player.getName()));
     }
-
 }

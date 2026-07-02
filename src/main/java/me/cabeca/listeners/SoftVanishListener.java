@@ -1,6 +1,8 @@
 package me.cabeca.listeners;
 
 import me.cabeca.commands.SoftVanishCommand;
+import me.cabeca.commands.VanishCommand;
+import me.cabeca.integration.DiscordSrvPermissionService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,11 +13,17 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class SoftVanishListener implements Listener {
 
     private final SoftVanishCommand softVanishCommand;
+    private final DiscordSrvPermissionService discordPermService;
+
+    private boolean hasDiscordSRV() {
+        return Bukkit.getPluginManager().isPluginEnabled("DiscordSRV");
+    }
 
     public SoftVanishListener(
-            SoftVanishCommand softVanishCommand
+            SoftVanishCommand softVanishCommand, DiscordSrvPermissionService discordPermService
     ){
         this.softVanishCommand = softVanishCommand;
+        this.discordPermService = discordPermService;
     }
 
     @EventHandler
@@ -28,7 +36,7 @@ public class SoftVanishListener implements Listener {
             softVanishCommand.applySoftVanish(player);
 
             player.sendMessage("§aVocê ainda está em soft vanish!");
-
+            if(hasDiscordSRV()) discordPermService.applySilent(player);
             event.joinMessage(null);
 
             for(Player p : Bukkit.getOnlinePlayers()){
@@ -49,6 +57,7 @@ public class SoftVanishListener implements Listener {
 
         if(softVanishCommand.getSoftVanishedPlayers().contains(player.getUniqueId())){
 
+            if(hasDiscordSRV()) discordPermService.removeSilent(player);
             event.quitMessage(null);
 
             for(Player p : Bukkit.getOnlinePlayers()){
